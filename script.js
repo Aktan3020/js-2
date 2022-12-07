@@ -1,62 +1,47 @@
-let LoginInput = document.querySelector(".login");
-let PassInput = document.querySelector(".password");
-let EmailInput = document.querySelector(".email");
-let button = document.querySelector(".butt");
-let ArrEmailInput = EmailInput.value.split('');
-let warning = document.querySelector(".p3")
+const rateEl = document.getElementById("rate");
+const swapEl = document.getElementById("swap");
+const currencyOneEl = document.getElementById("currency-one");
+const currencyTwoEl = document.getElementById("currency-two");
+const amountOneEl = document.getElementById("amount-one");
+const amountTwoEl = document.getElementById("amount-two");
 
+let exchangeRates = {}
+const getExchangeRates = () => {
+    const currencyOne = currencyOneEl.value
 
-function checkEmail() {
-let regex = /./
-    let regex2 = /@/;
-    let testdog = regex.test(EmailInput.value)
-    let testTochka = regex2.test(EmailInput.value)
+    fetch(`https://v6.exchangerate-api.com/v6/41b4541f3df8b629ff6e1018/latest/${currencyOne}`)
+    .then((res) => res.json())
+    .then((data) => {
+        exchangeRates = { ...data.conversion_rates};
+        calculateRates();console.log(exchangeRates)
+    });
+};
+
+const calculateRates = () => {
+    const currencyTwo = currencyTwoEl.value
+    const rate = exchangeRates[currencyTwo];
+    const resultCalculate = +amountOneEl.value * rate;
+    amountTwoEl.value = resultCalculate.toFixed(2);
+    
+};
+let ratio = () =>{
+   let one  = currencyOneEl.value
+   let two = currencyTwoEl.value
+   currencyOneEl.value = two
+   currencyTwoEl.value = one
+   let val = two.value;
+   const rate = exchangeRates[val];
+   let one2 = amountOneEl.value
+   let two2 = amountTwoEl.value
+   amountOneEl.value = two2
+   amountTwoEl.value = one2
   
-    if (testdog == true) {
-        let indexdog = EmailInput.value.indexOf("@")
-        if (indexdog == 0) {
-            warning.textContent = "Ошибка"
-            EmailInput.style.border = '1px solid red';
-        
-        }
-        else {
-              if (EmailInput.value[indexdog + 2] == undefined) {
-                 warning.textContent = "Ошибка"
-                 EmailInput.style.border = '1px solid red';
-            }
-            else if(testTochka == true){
-                let indexTochka = EmailInput.value.indexOf(".")
-               if (EmailInput.value[indexTochka+1]==undefined){
-                warning.textContent = "Ошибка"
-                EmailInput.style.border = '1px solid red';
-               }
-               else{
-                alert("Регистрация выполнена")
-               }
-            }
-            else{
-                warning.textContent = "Ошибка"
-                EmailInput.style.border = '1px solid red';
-            }
-        }
-    }
-    else {
-        warning.textContent = "Ошибка"
-        EmailInput.style.border = '1px solid red';
-    }
 
-    // if (testEmail === true) {
-    //     alert('Регистрация выполнена')
-    // }
-    // else {
-    //     warning.textContent = "Ошибка"
-    // }
-    //  for(let i = 0;i<EmailInput.length; i++)
-    //  
-    //  ArrEmailInput.find(gg => function(gg){
-
-    //  })
 }
-// checkEmail
 
-button.addEventListener("click", checkEmail)
+getExchangeRates()
+
+amountOneEl.addEventListener("input", calculateRates);
+currencyOneEl.addEventListener("change", getExchangeRates);
+currencyTwoEl.addEventListener("change" , calculateRates);
+swapEl.addEventListener("click",ratio)
